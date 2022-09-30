@@ -1,16 +1,16 @@
 package com.wchtpapaya.bot.telegram.command;
 
 import com.wchtpapaya.bot.Messages;
-import com.wchtpapaya.bot.telegram.TelegramMinionBot;
+import com.wchtpapaya.bot.telegram.TelegramEvolutionBot;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
 public class DeafCommand extends ServiceCommand {
 
-    private TelegramMinionBot bot;
+    private TelegramEvolutionBot bot;
 
-    public DeafCommand(String identifier, String description, TelegramMinionBot bot) {
+    public DeafCommand(String identifier, String description, TelegramEvolutionBot bot) {
         super(identifier, description);
         this.bot = bot;
     }
