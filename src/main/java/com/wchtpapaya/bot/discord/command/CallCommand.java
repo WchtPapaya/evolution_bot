@@ -10,6 +10,7 @@ import com.wchtpapaya.bot.telegram.TelegramEvolutionBot;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.VoiceState;
+import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.channel.VoiceChannel;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
@@ -59,7 +60,7 @@ public class CallCommand extends AbstractCommand {
             log.error("Call has not been started");
             return;
         }
-        String text = getCallTextWithPlayersNumber();
+        String text = getCallTextWithPlayersNumber(null);
         minionBot.editMessageAtListeners(callInfo.getTelegramMessagesInfo(), text);
 
     }
@@ -75,14 +76,16 @@ public class CallCommand extends AbstractCommand {
     private void sendCallMessage(MessageCreateEvent event) {
         if (!hasCorrectGuildInfo(event)) return;
 
-        String text = getCallTextWithPlayersNumber();
+        String text = getCallTextWithPlayersNumber(event.getMember().get());
         log.info("Someone called members to play in the LoL at Discord. Sent message to Telegram listeners");
         callInfo = new CallInfo(LocalTime.now(), minionBot.sendToListeners(text));
     }
 
-    private String getCallTextWithPlayersNumber() {
+    private String getCallTextWithPlayersNumber(Member caller) {
         Set<String> readyPlayers = playersExtractor.getReadyPlayers(discordClient, guildInfo.getGuildID(), guildInfo.getSubscribedChannelIDs());
-
+        if (caller != null) {
+            readyPlayers.add(caller.getDisplayName());
+        }
         StringBuilder playersInfo = new StringBuilder();
         playersInfo.append("\n\n");
         playersInfo.append(getRequiredPlayersCountText(readyPlayers.size()));
