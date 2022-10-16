@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.helpCommand.HelpCommand;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -27,7 +28,6 @@ public final class TelegramEvolutionBot extends TelegramLongPollingCommandBot {
     public static final String CONFIG_TG_CHATS_JSON = "data/telegram_chats.json";
     private final String name;
     private final String token;
-
     @Getter
     private final List<Long> chatsToPost;
 
@@ -78,12 +78,30 @@ public final class TelegramEvolutionBot extends TelegramLongPollingCommandBot {
         }
     }
 
-    public void replyToListeners(String text) {
+    public HashMap<Long, Integer> replyToListeners(String text) {
+        HashMap<Long, Integer> responses = new HashMap<>();
         for (Long id : chatsToPost) {
             SendMessage message = new SendMessage();
             message.setText(text);
-            message.enableMarkdown(true);
+            message.enableMarkdown(false);
             message.setChatId(id);
+            try {
+                var response = execute(message);
+                responses.put(response.getChatId(), response.getMessageId());
+            } catch (TelegramApiException e) {
+                log.error("Error at sending message", e);
+            }
+        }
+        return responses;
+    }
+
+    public void editMessageAtListeners(HashMap<Long, Integer> messages, String text) {
+        for (var m: messages.entrySet()) {
+            EditMessageText message = new EditMessageText();
+            message.setChatId(m.getKey());
+            message.setMessageId(m.getValue());
+            message.enableMarkdown(false);
+            message.setText(text);
             try {
                 execute(message);
             } catch (TelegramApiException e) {

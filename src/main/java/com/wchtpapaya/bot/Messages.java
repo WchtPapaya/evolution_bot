@@ -9,4 +9,6 @@ public class Messages {
     public static final String TELEGRAM_SUBSCRIBE_MESSAGE = "Буду сообщать о происходящем в Discord в этот чат";
     public static final String TELEGRAM_UNSUBSCRIBE_MESSAGE = "Больше не буду шушукаться о том что в Discord";
 
+    public static final String CALL_IS_STARTED = "Призыв уже идет";
+
 }

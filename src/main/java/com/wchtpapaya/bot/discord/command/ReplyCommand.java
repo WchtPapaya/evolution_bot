@@ -1,7 +1,6 @@
 package com.wchtpapaya.bot.discord.command;
 
 import com.wchtpapaya.bot.Utils;
-import com.wchtpapaya.bot.discord.DiscordEvolutionBot;
 import com.wchtpapaya.bot.discord.config.GuildInfo;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.message.MessageCreateEvent;
@@ -11,7 +10,7 @@ import java.io.IOException;
 
 @Slf4j
 public class ReplyCommand extends AbstractCommand {
-
+    public static final String CONFIG_REPLIES_JSON = "config/discord_replies.json";
     private final String[] replyTexts;
 
     public ReplyCommand(GuildInfo guildInfo, GatewayDiscordClient discordClient, String[] replyTexts) {
@@ -22,7 +21,7 @@ public class ReplyCommand extends AbstractCommand {
     public ReplyCommand(GuildInfo guildInfo, GatewayDiscordClient discordClient) {
         super(guildInfo, discordClient);
         try {
-            replyTexts = Utils.readStringArrayFromJson(DiscordEvolutionBot.CONFIG_REPLIES_JSON);
+            replyTexts = Utils.readStringArrayFromJson(CONFIG_REPLIES_JSON);
 
         } catch (IOException e) {
             String message = "Can not load configs from json files";

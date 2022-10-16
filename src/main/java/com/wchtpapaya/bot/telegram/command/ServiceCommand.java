@@ -13,7 +13,7 @@ abstract class ServiceCommand extends BotCommand {
 
     void sendAnswer(AbsSender absSender, Long chatId, String text) {
         SendMessage message = new SendMessage();
-        message.enableMarkdown(true);
+        message.enableMarkdown(false);
         message.setChatId(chatId.toString());
         message.setText(text);
         try {

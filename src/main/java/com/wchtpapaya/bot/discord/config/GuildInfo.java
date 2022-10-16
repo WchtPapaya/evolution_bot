@@ -8,6 +8,9 @@ import lombok.Setter;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,13 +39,17 @@ public class GuildInfo {
     }
 
     public void saveTo(String jsonFile) throws IOException {
+        File file = new File(jsonFile);
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+        }
         ObjectMapper mapper = new ObjectMapper();
 
         GuildInfoPojo pojo = new GuildInfoPojo();
         pojo.setGuildID(guildID.asString());
         pojo.setSubscribedChannelIDs(subscribedChannelIDs.stream().map(Snowflake::asString).toArray(String[]::new));
-
-        mapper.writeValue(new File(jsonFile), pojo);
+        mapper.writeValue(file, pojo);
     }
 
     public boolean subscribedToGuild() {
