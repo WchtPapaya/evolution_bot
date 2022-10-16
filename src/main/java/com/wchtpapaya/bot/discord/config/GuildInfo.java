@@ -8,9 +8,6 @@ import lombok.Setter;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +16,7 @@ public class GuildInfo {
     private final List<Snowflake> subscribedChannelIDs;
     @Setter
     private Snowflake guildID;
+    private List<Snowflake> admins;
 
     public GuildInfo() {
         subscribedChannelIDs = new ArrayList<>();
@@ -29,6 +27,10 @@ public class GuildInfo {
         subscribedChannelIDs = new ArrayList<>();
         for (String s : pojo.getSubscribedChannelIDs()) {
             subscribedChannelIDs.add(Snowflake.of(s));
+        }
+        admins = new ArrayList<>();
+        for (String s : pojo.getAdminIDs()) {
+            admins.add(Snowflake.of(s));
         }
     }
 
@@ -49,6 +51,7 @@ public class GuildInfo {
         GuildInfoPojo pojo = new GuildInfoPojo();
         pojo.setGuildID(guildID.asString());
         pojo.setSubscribedChannelIDs(subscribedChannelIDs.stream().map(Snowflake::asString).toArray(String[]::new));
+        pojo.setAdminIDs(admins.stream().map(Snowflake::asString).toArray(String[]::new));
         mapper.writeValue(file, pojo);
     }
 

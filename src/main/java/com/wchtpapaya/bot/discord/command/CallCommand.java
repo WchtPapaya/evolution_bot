@@ -77,7 +77,7 @@ public class CallCommand extends AbstractCommand {
 
         String text = getCallTextWithPlayersNumber();
         log.info("Someone called members to play in the LoL at Discord. Sent message to Telegram listeners");
-        callInfo = new CallInfo(LocalTime.now(), minionBot.replyToListeners(text));
+        callInfo = new CallInfo(LocalTime.now(), minionBot.sendToListeners(text));
     }
 
     private String getCallTextWithPlayersNumber() {

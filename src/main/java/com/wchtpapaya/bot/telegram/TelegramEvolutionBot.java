@@ -78,7 +78,7 @@ public final class TelegramEvolutionBot extends TelegramLongPollingCommandBot {
         }
     }
 
-    public HashMap<Long, Integer> replyToListeners(String text) {
+    public HashMap<Long, Integer> sendToListeners(String text) {
         HashMap<Long, Integer> responses = new HashMap<>();
         for (Long id : chatsToPost) {
             SendMessage message = new SendMessage();
