@@ -25,22 +25,23 @@ import java.nio.file.Path;
 @Slf4j
 public class SendAllCommand extends AbstractCommand {
     private final String UPDATE_FILE = "config/update.txt";
-    private String text;
     private TelegramEvolutionBot telegramBot;
 
     public SendAllCommand(GuildInfo guildInfo, GatewayDiscordClient discordClient, TelegramEvolutionBot telegramBot) {
         super(guildInfo, discordClient);
         this.telegramBot = telegramBot;
+    }
+
+    @Override
+    public void execute(MessageCreateEvent event) {
+        String text;
         try {
             text = Files.readString(Path.of(UPDATE_FILE));
         } catch (IOException e) {
             log.error("Can not read update file");
             throw new RuntimeException(e);
         }
-    }
 
-    @Override
-    public void execute(MessageCreateEvent event) {
         Snowflake id = event.getMember().get().getId();
         if (guildInfo.getAdmins().contains(id)) {
             telegramBot.sendToListeners(text);
