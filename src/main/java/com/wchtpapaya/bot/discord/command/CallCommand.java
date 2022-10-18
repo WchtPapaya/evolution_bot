@@ -12,6 +12,8 @@ import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.VoiceState;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.channel.VoiceChannel;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 
@@ -29,6 +31,9 @@ public class CallCommand extends AbstractCommand {
     private final TelegramEvolutionBot minionBot;
     private final String[] callTexts;
     private CallInfo callInfo = null;
+    @Getter
+    @Setter
+    private boolean callStartedReply = true;
 
 
     public CallCommand(GuildInfo guildInfo, GatewayDiscordClient discordClient, PlayersExtractor playersExtractor, TelegramEvolutionBot minionBot) {
@@ -51,6 +56,7 @@ public class CallCommand extends AbstractCommand {
         if (callInfo == null) {
             sendCallMessage(event);
         } else {
+            if (isGif(event.getMessage().getContent())) return;
             sendMessage(event, Messages.CALL_IS_STARTED);
         }
     }
@@ -65,12 +71,27 @@ public class CallCommand extends AbstractCommand {
 
     }
 
+
     public boolean isCallStarted() {
         return callInfo != null;
     }
 
     public void resetCall() {
+        minionBot.editMessageAtListeners(callInfo.getTelegramMessagesInfo(), Messages.CALL_IS_ENDED);
         callInfo = null;
+    }
+
+    public boolean isGif(String str) {
+        return str.startsWith("https://tenor.com") && str.contains("gif");
+    }
+
+    public int getVoiceUsers() {
+        int users = 0;
+        for (var channelId : guildInfo.getSubscribedChannelIDs()) {
+            Flux<VoiceState> voiceStateFlux = ((VoiceChannel) discordClient.getChannelById(channelId).block()).getVoiceStates();
+            users += voiceStateFlux.count().block();
+        }
+        return users;
     }
 
     private void sendCallMessage(MessageCreateEvent event) {
@@ -106,14 +127,5 @@ public class CallCommand extends AbstractCommand {
 
     private String getRequiredPlayersCountText(int size) {
         return numberTexts.get(Math.max(MAX_PLAYERS - size, 0));
-    }
-
-    public int getVoiceUsers() {
-        int users = 0;
-        for (var channelId : guildInfo.getSubscribedChannelIDs()) {
-            Flux<VoiceState> voiceStateFlux = ((VoiceChannel) discordClient.getChannelById(channelId).block()).getVoiceStates();
-            users += voiceStateFlux.count().block();
-        }
-        return users;
     }
 }

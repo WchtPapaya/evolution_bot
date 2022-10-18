@@ -11,4 +11,6 @@ public class Messages {
     public static final String CALL_IS_STARTED = "Призыв уже идет";
     public static final String ONLY_ADMINS_MESSAGE = "Похоже это доступно только админам..";
 
+    public static final String CALL_IS_ENDED = "Всем спасибо, все свободны! Буду ждать новых каток";
+
 }

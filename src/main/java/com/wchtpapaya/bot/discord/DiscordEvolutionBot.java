@@ -72,6 +72,12 @@ public class DiscordEvolutionBot {
                     // 3.1 Message.getContent() is a String
                     final String content = event.getMessage().getContent();
 
+                    // start a call by gifs
+                    if (callCommand.isGif(content)) {
+                        callCommand.execute(event);
+                        return;
+                    }
+
                     for (final Map.Entry<String, Command> entry : commands.entrySet()) {
                         if (checkBotPrefix(content.toLowerCase(), entry.getKey())) {
                             entry.getValue().execute(event);
