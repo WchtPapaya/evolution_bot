@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.wchtpapaya</groupId>
-    <artifactId>DiscordMusicBot</artifactId>
+    <artifactId>EvolutionBot</artifactId>
 
     <version>1.3-SNAPSHOT</version>
 
-    <name>DiscordMusicBot</name>
+    <name>EvolutionBot</name>
 
     <properties>
         <telegram.version>5.0.1</telegram.version>
