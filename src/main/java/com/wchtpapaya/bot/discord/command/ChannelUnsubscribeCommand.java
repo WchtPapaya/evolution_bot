@@ -19,9 +19,9 @@ public class ChannelUnsubscribeCommand extends AbstractCommand {
             sendMessage(event, Messages.NO_GUILD_MESSAGE);
             return;
         }
-        GuildChannel channel = getCmdParameterFromMessage(event, "отписаться_канал");
+        GuildChannel channel = getVoiceChannelFromMessage(event);
         if (channel == null) return;
-        if (guildInfo.removeChannel(channel.getId())) {
+        if (guildInfo.removeVoiceChannel(channel.getId())) {
             sendMessage(event, "Больше не слушаю этот канал");
             log.info("Unsubscribed from the channel <{}>", channel.getName());
             updateGuildInfoFile();
