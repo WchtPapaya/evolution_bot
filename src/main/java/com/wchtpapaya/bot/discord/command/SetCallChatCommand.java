@@ -8,8 +8,8 @@ import discord4j.core.object.entity.channel.GuildChannel;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ChannelSubscribeCommand extends AbstractCommand {
-    public ChannelSubscribeCommand(GuildInfo guildInfo, GatewayDiscordClient discordClient) {
+public class SetCallChatCommand extends AbstractCommand {
+    public SetCallChatCommand(GuildInfo guildInfo, GatewayDiscordClient discordClient) {
         super(guildInfo, discordClient);
     }
 
@@ -19,12 +19,12 @@ public class ChannelSubscribeCommand extends AbstractCommand {
             sendMessage(event, Messages.NO_GUILD_MESSAGE);
             return;
         }
-        GuildChannel channel = getVoiceChannelFromMessage(event);
+        GuildChannel channel = getTextChannelFromMessage(event);
         if (channel == null) return;
 
-        guildInfo.addVoiceChannel(channel.getId());
-        sendMessage(event, "Голосовой канал <" + channel.getName() + "> добавлен");
-        log.info("Subscribed to the voice channel <{}>", channel.getName());
+        guildInfo.addTextChannel(channel.getId());
+        sendMessage(event, "Текстовый канал для призыва <" + channel.getName() + "> добавлен");
+        log.info("Set chat channel for call <{}>", channel.getName());
         updateGuildInfoFile();
     }
 }

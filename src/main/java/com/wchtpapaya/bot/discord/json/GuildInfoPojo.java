@@ -8,5 +8,6 @@ import lombok.Setter;
 public class GuildInfoPojo {
     private String GuildID;
     private String[] subscribedChannelIDs;
+    private String[] callChannelIDs;
     private String[] adminIDs;
 }

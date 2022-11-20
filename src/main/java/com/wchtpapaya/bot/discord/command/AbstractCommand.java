@@ -6,6 +6,7 @@ import com.wchtpapaya.bot.discord.config.GuildInfo;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.channel.GuildChannel;
+import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.object.entity.channel.VoiceChannel;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,7 +30,7 @@ public abstract class AbstractCommand implements Command {
         if (!guildInfo.subscribedToGuild()) {
             sendMessage(event, Messages.NO_GUILD_MESSAGE);
             return false;
-        } else if (!guildInfo.subscribedToChannel()) {
+        } else if (!guildInfo.subscribedToVoiceChannel()) {
             sendMessage(event, Messages.NO_CHANNEL_MESSAGE);
             return false;
         }
@@ -56,18 +57,27 @@ public abstract class AbstractCommand implements Command {
         }
     }
 
-    protected GuildChannel getCmdParameterFromMessage(MessageCreateEvent event, String command) {
+    protected GuildChannel getVoiceChannelFromMessage(MessageCreateEvent event) {
+        GuildChannel channel = getChannelFromMessage(event);
+        return channel instanceof VoiceChannel ? channel : null;
+    }
+
+    protected GuildChannel getTextChannelFromMessage(MessageCreateEvent event) {
+        GuildChannel channel = getChannelFromMessage(event);
+        return channel instanceof TextChannel ? channel : null;
+    }
+
+    protected GuildChannel getChannelFromMessage(MessageCreateEvent event) {
         String content = event.getMessage().getData().content();
-        int startIndex = content.indexOf(command) + command.length() + 1;
-        if (startIndex > content.length() - 1) {
+        if (!content.contains(" ")) {
             sendMessage(event, Messages.NO_CHANNEL_PARAMETER);
             return null;
         }
-        String channelName = content.substring(startIndex);
+        String channelName = content.substring(content.indexOf(" ") + 1);
         List<GuildChannel> channels = discordClient.getGuildChannels(guildInfo.getGuildID()).collectList().block();
 
         Optional<GuildChannel> channel = channels.stream().filter(c -> c.getName().equals(channelName)).findAny();
-        if (!channel.isPresent() || !(channel.get() instanceof VoiceChannel)) {
+        if (channel.isEmpty()) {
             sendMessage(event, Messages.NO_CHANNEL_FOUND);
             return null;
         }

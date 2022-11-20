@@ -7,6 +7,7 @@ import com.wchtpapaya.bot.discord.config.GuildInfo;
 import com.wchtpapaya.bot.discord.config.NumberText;
 import com.wchtpapaya.bot.discord.extractor.PlayersExtractor;
 import com.wchtpapaya.bot.telegram.TelegramEvolutionBot;
+import discord4j.common.util.Snowflake;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.VoiceState;
@@ -53,6 +54,9 @@ public class CallCommand extends AbstractCommand {
 
     @Override
     public void execute(MessageCreateEvent event) {
+        Snowflake channelID = event.getMessage().getChannel().block().getId();
+        if (!guildInfo.getCallChannelIDs().contains(channelID)) return;
+
         if (callInfo == null) {
             sendCallMessage(event);
         } else {

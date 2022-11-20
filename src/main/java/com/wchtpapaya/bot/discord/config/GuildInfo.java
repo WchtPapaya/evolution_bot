@@ -14,12 +14,15 @@ import java.util.List;
 @Getter
 public class GuildInfo {
     private final List<Snowflake> subscribedChannelIDs;
+    private final List<Snowflake> callChannelIDs;
+
     @Setter
     private Snowflake guildID;
     private List<Snowflake> admins;
 
     public GuildInfo() {
         subscribedChannelIDs = new ArrayList<>();
+        callChannelIDs = new ArrayList<>();
     }
 
     public GuildInfo(GuildInfoPojo pojo) {
@@ -32,6 +35,11 @@ public class GuildInfo {
         for (String s : pojo.getAdminIDs()) {
             admins.add(Snowflake.of(s));
         }
+        callChannelIDs = new ArrayList<>();
+        for (String s : pojo.getCallChannelIDs()) {
+            callChannelIDs.add(Snowflake.of(s));
+        }
+
     }
 
     public static GuildInfo loadFrom(String jsonFile) throws IOException {
@@ -52,6 +60,7 @@ public class GuildInfo {
         pojo.setGuildID(guildID.asString());
         pojo.setSubscribedChannelIDs(subscribedChannelIDs.stream().map(Snowflake::asString).toArray(String[]::new));
         pojo.setAdminIDs(admins.stream().map(Snowflake::asString).toArray(String[]::new));
+        pojo.setCallChannelIDs(callChannelIDs.stream().map(Snowflake::asString).toArray(String[]::new));
         mapper.writeValue(file, pojo);
     }
 
@@ -59,19 +68,27 @@ public class GuildInfo {
         return guildID != null && !guildID.asString().isEmpty();
     }
 
-    public boolean subscribedToChannel() {
+    public boolean subscribedToVoiceChannel() {
         return subscribedChannelIDs != null && !subscribedChannelIDs.isEmpty();
     }
 
     public boolean subscribed() {
-        return subscribedToGuild() && subscribedToChannel();
+        return subscribedToGuild() && subscribedToVoiceChannel();
     }
 
-    public void addChannel(Snowflake id) {
+    public void addVoiceChannel(Snowflake id) {
         subscribedChannelIDs.add(id);
     }
 
-    public boolean removeChannel(Snowflake id) {
+    public boolean removeVoiceChannel(Snowflake id) {
         return subscribedChannelIDs.remove(id);
+    }
+
+    public void addTextChannel(Snowflake id) {
+        callChannelIDs.add(id);
+    }
+
+    public boolean removeTextChannel(Snowflake id) {
+        return callChannelIDs.remove(id);
     }
 }

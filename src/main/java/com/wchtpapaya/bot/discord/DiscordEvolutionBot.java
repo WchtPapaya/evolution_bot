@@ -62,7 +62,9 @@ public class DiscordEvolutionBot {
         commands.put("слушать_канал", new ChannelSubscribeCommand(guildInfo, discordClient));
         commands.put("отписаться_канал", new ChannelUnsubscribeCommand(guildInfo, discordClient));
         commands.put("join", new JoinVoiceChannelCommand(guildInfo, discordClient));
-        commands.put("send_all", new SendAllCommand(guildInfo, discordClient, telegramBot));
+        commands.put("send_all_update", new SendAllCommand(guildInfo, discordClient, telegramBot));
+        commands.put("set_call_chat", new SetCallChatCommand(guildInfo, discordClient));
+        commands.put("remove_call_chat", new RemoveCallChatCommand(guildInfo, discordClient));
 
         discordClient.getEventDispatcher().on(MessageCreateEvent.class)
                 // subscribe is like block, in that it will *request* for action
