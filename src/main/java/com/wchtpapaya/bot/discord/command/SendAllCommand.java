@@ -30,7 +30,7 @@ import java.util.Optional;
  */
 @Slf4j
 public class SendAllCommand extends AbstractCommand {
-    private final String UPDATE_FILE = "config/update.txt";
+    private final String UPDATE_FILE = "update/update.txt";
     private TelegramEvolutionBot telegramBot;
 
     public SendAllCommand(GuildInfo guildInfo, GatewayDiscordClient discordClient, TelegramEvolutionBot telegramBot) {
