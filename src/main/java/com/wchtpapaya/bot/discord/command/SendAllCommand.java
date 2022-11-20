@@ -42,7 +42,12 @@ public class SendAllCommand extends AbstractCommand {
             throw new RuntimeException(e);
         }
 
-        Snowflake id = event.getMember().get().getId();
+        Optional<Member> optionalMember = event.getMember();
+        if (optionalMember.isEmpty()) {
+            sendMessage(event, Messages.ADMIN_COMMAND_FROM_PRIVATE_CHAT);
+            return;
+        }
+        Snowflake id = optionalMember.get().getId();
         if (guildInfo.getAdmins().contains(id)) {
             telegramBot.sendToListeners(text);
         } else {

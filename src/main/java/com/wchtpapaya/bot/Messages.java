@@ -10,7 +10,7 @@ public class Messages {
     public static final String TELEGRAM_UNSUBSCRIBE_MESSAGE = "Больше не буду шушукаться о том что в Discord";
     public static final String CALL_IS_STARTED = "Призыв уже идет";
     public static final String ONLY_ADMINS_MESSAGE = "Похоже это доступно только админам..";
-
+    public static final String ADMIN_COMMAND_FROM_PRIVATE_CHAT = "Эту команду нельзя отправлять из приватного чата..";
     public static final String CALL_IS_ENDED = "Всем спасибо, все свободны! Буду ждать новых каток";
 
 }
