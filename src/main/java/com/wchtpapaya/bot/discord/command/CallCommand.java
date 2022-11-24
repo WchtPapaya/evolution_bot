@@ -5,8 +5,8 @@ import com.wchtpapaya.bot.Messages;
 import com.wchtpapaya.bot.Utils;
 import com.wchtpapaya.bot.discord.config.GuildInfo;
 import com.wchtpapaya.bot.discord.config.NumberText;
+import com.wchtpapaya.bot.discord.connector.TelegramConnector;
 import com.wchtpapaya.bot.discord.extractor.PlayersExtractor;
-import com.wchtpapaya.bot.telegram.TelegramEvolutionBot;
 import discord4j.common.util.Snowflake;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.message.MessageCreateEvent;
@@ -29,7 +29,7 @@ public class CallCommand extends AbstractCommand {
     public static final int MAX_PLAYERS = 5;
     private final PlayersExtractor playersExtractor;
     private final NumberText numberTexts;
-    private final TelegramEvolutionBot minionBot;
+    private final TelegramConnector minionBot;
     private final String[] callTexts;
     private CallInfo callInfo = null;
     @Getter
@@ -37,7 +37,7 @@ public class CallCommand extends AbstractCommand {
     private boolean callStartedReply = true;
 
 
-    public CallCommand(GuildInfo guildInfo, GatewayDiscordClient discordClient, PlayersExtractor playersExtractor, TelegramEvolutionBot minionBot) {
+    public CallCommand(GuildInfo guildInfo, GatewayDiscordClient discordClient, PlayersExtractor playersExtractor, TelegramConnector minionBot) {
         super(guildInfo, discordClient);
         this.playersExtractor = playersExtractor;
         this.minionBot = minionBot;
@@ -103,7 +103,7 @@ public class CallCommand extends AbstractCommand {
 
         String text = getCallTextWithPlayersNumber(event.getMember().get());
         log.info("Someone called members to play in the LoL at Discord. Sent message to Telegram listeners");
-        callInfo = new CallInfo(LocalTime.now(), minionBot.sendToListeners(text));
+        callInfo = new CallInfo(LocalTime.now(), minionBot.notifyListeners(text));
     }
 
     private String getCallTextWithPlayersNumber(Member caller) {
@@ -125,8 +125,7 @@ public class CallCommand extends AbstractCommand {
                 playersInfo.append("\n");
             }
         }
-        String text = getNextMessageText(callTexts) + playersInfo;
-        return text;
+        return getNextMessageText(callTexts) + playersInfo;
     }
 
     private String getRequiredPlayersCountText(int size) {

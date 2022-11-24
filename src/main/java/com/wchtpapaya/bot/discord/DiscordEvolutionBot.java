@@ -2,9 +2,9 @@ package com.wchtpapaya.bot.discord;
 
 import com.wchtpapaya.bot.discord.command.*;
 import com.wchtpapaya.bot.discord.config.GuildInfo;
+import com.wchtpapaya.bot.discord.connector.TelegramConnector;
 import com.wchtpapaya.bot.discord.extractor.LolVoiceChannelExtractor;
 import com.wchtpapaya.bot.discord.extractor.PlayersExtractor;
-import com.wchtpapaya.bot.telegram.TelegramEvolutionBot;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.VoiceStateUpdateEvent;
@@ -25,13 +25,13 @@ public class DiscordEvolutionBot {
     public static final String CONFIG_GUILD_INFO_JSON = "data/guildinfo.json";
     private final Map<String, Command> commands = new HashMap<>();
     @Setter
-    private TelegramEvolutionBot telegramBot;
+    private TelegramConnector telegramBot;
     private final PlayersExtractor playersExtractor = new LolVoiceChannelExtractor();
 
     private final GuildInfo guildInfo;
-    private GatewayDiscordClient discordClient;
 
-    public DiscordEvolutionBot() {
+    public DiscordEvolutionBot(TelegramConnector telegramConnector) {
+        telegramBot = telegramConnector;
         try {
             if (Files.exists(Path.of(CONFIG_GUILD_INFO_JSON))) {
                 guildInfo = GuildInfo.loadFrom(CONFIG_GUILD_INFO_JSON);
@@ -47,7 +47,7 @@ public class DiscordEvolutionBot {
     }
 
     public void start(String token) {
-        discordClient = DiscordClientBuilder.create(token).build()
+        GatewayDiscordClient discordClient = DiscordClientBuilder.create(token).build()
                 .gateway()
                 .setEnabledIntents(IntentSet.all())
                 .login()

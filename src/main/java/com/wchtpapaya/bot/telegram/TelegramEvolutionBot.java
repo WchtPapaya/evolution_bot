@@ -95,7 +95,7 @@ public final class TelegramEvolutionBot extends TelegramLongPollingCommandBot {
         return responses;
     }
 
-    public void editMessageAtListeners(HashMap<Long, Integer> messages, String text) {
+    public void editMessageAtListeners(Map<Long, Integer> messages, String text) {
         for (var m: messages.entrySet()) {
             EditMessageText message = new EditMessageText();
             message.setChatId(m.getKey());
