@@ -2,38 +2,26 @@ package com.wchtpapaya.bot.discord.command;
 
 import com.wchtpapaya.bot.Messages;
 import com.wchtpapaya.bot.discord.config.GuildInfo;
-import com.wchtpapaya.bot.telegram.TelegramEvolutionBot;
+import com.wchtpapaya.bot.telegram.connector.TelegramConnector;
 import discord4j.common.util.Snowflake;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Member;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
-/**
- * To use this add text to update.txt
- * and add your Discord id to data/guild.json
- * Example:
- * ...
- * "adminIDs": [
- * "<Your ID>"
- * ]
- * ...
- *
- * Or send message after command
- * Example:
- * /<command> My message to all
- */
-@Slf4j
 public class SendAllCommand extends AbstractCommand {
-    private final String UPDATE_FILE = "update/update.txt";
-    private TelegramEvolutionBot telegramBot;
+    private static final Logger log = LoggerFactory.getLogger(SendAllCommand.class);
 
-    public SendAllCommand(GuildInfo guildInfo, GatewayDiscordClient discordClient, TelegramEvolutionBot telegramBot) {
+    private final String UPDATE_FILE = "update/update.txt";
+    final private TelegramConnector telegramBot;
+
+    public SendAllCommand(GuildInfo guildInfo, GatewayDiscordClient discordClient, TelegramConnector telegramBot) {
         super(guildInfo, discordClient);
         this.telegramBot = telegramBot;
     }
@@ -60,7 +48,7 @@ public class SendAllCommand extends AbstractCommand {
         }
         Snowflake id = optionalMember.get().getId();
         if (guildInfo.getAdmins().contains(id)) {
-            telegramBot.sendToListeners(text);
+            telegramBot.notifyListeners(text);
         } else {
             sendMessage(event, Messages.ONLY_ADMINS_MESSAGE);
         }

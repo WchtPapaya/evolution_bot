@@ -3,21 +3,20 @@ package com.wchtpapaya.bot.discord.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wchtpapaya.bot.discord.json.GuildInfoPojo;
 import discord4j.common.util.Snowflake;
-import lombok.Getter;
-import lombok.Setter;
+
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-@Getter
 public class GuildInfo {
     private final List<Snowflake> subscribedChannelIDs;
     private final List<Snowflake> callChannelIDs;
-
-    @Setter
     private Snowflake guildID;
+
+
     private List<Snowflake> admins;
 
     public GuildInfo() {
@@ -26,17 +25,17 @@ public class GuildInfo {
     }
 
     public GuildInfo(GuildInfoPojo pojo) {
-        guildID = Snowflake.of(pojo.getGuildID());
+        guildID = Snowflake.of(pojo.guildID());
         subscribedChannelIDs = new ArrayList<>();
-        for (String s : pojo.getSubscribedChannelIDs()) {
+        for (String s : pojo.subscribedChannelIDs()) {
             subscribedChannelIDs.add(Snowflake.of(s));
         }
         admins = new ArrayList<>();
-        for (String s : pojo.getAdminIDs()) {
+        for (String s : pojo.adminIDs()) {
             admins.add(Snowflake.of(s));
         }
         callChannelIDs = new ArrayList<>();
-        for (String s : pojo.getCallChannelIDs()) {
+        for (String s : pojo.callChannelIDs()) {
             callChannelIDs.add(Snowflake.of(s));
         }
 
@@ -56,11 +55,11 @@ public class GuildInfo {
         }
         ObjectMapper mapper = new ObjectMapper();
 
-        GuildInfoPojo pojo = new GuildInfoPojo();
-        pojo.setGuildID(guildID.asString());
-        pojo.setSubscribedChannelIDs(subscribedChannelIDs.stream().map(Snowflake::asString).toArray(String[]::new));
-        pojo.setAdminIDs(admins.stream().map(Snowflake::asString).toArray(String[]::new));
-        pojo.setCallChannelIDs(callChannelIDs.stream().map(Snowflake::asString).toArray(String[]::new));
+        GuildInfoPojo pojo = new GuildInfoPojo(
+                guildID.asString(),
+                subscribedChannelIDs.stream().map(Snowflake::asString).toArray(String[]::new),
+                admins.stream().map(Snowflake::asString).toArray(String[]::new),
+                callChannelIDs.stream().map(Snowflake::asString).toArray(String[]::new));
         mapper.writeValue(file, pojo);
     }
 
@@ -90,5 +89,30 @@ public class GuildInfo {
 
     public boolean removeTextChannel(Snowflake id) {
         return callChannelIDs.remove(id);
+    }
+
+    public List<Snowflake> getAdmins() {
+        return admins;
+    }
+
+    public void setAdmins(List<Snowflake> admins) {
+        this.admins = admins;
+    }
+
+    public List<Snowflake> getSubscribedChannelIDs() {
+        return subscribedChannelIDs;
+    }
+
+    public Snowflake getGuildID() {
+        return guildID;
+    }
+
+    public List<Snowflake> getCallChannelIDs() {
+        return callChannelIDs;
+    }
+
+    //TODO Maybe it is not good to use set here
+    public void setGuildID(Snowflake guildID) {
+        this.guildID = guildID;
     }
 }

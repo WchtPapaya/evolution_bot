@@ -2,36 +2,39 @@ package com.wchtpapaya.bot.discord;
 
 import com.wchtpapaya.bot.discord.command.*;
 import com.wchtpapaya.bot.discord.config.GuildInfo;
+import com.wchtpapaya.bot.telegram.connector.TelegramConnector;
 import com.wchtpapaya.bot.discord.extractor.LolVoiceChannelExtractor;
 import com.wchtpapaya.bot.discord.extractor.PlayersExtractor;
-import com.wchtpapaya.bot.telegram.TelegramEvolutionBot;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.VoiceStateUpdateEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.channel.VoiceChannel;
 import discord4j.gateway.intent.IntentSet;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+
+
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-@Slf4j
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DiscordEvolutionBot {
+ private static final Logger log = LoggerFactory.getLogger(DiscordEvolutionBot.class);
+
 
     public static final String CONFIG_GUILD_INFO_JSON = "data/guildinfo.json";
     private final Map<String, Command> commands = new HashMap<>();
-    @Setter
-    private TelegramEvolutionBot telegramBot;
+    private final TelegramConnector tgBot;
     private final PlayersExtractor playersExtractor = new LolVoiceChannelExtractor();
 
     private final GuildInfo guildInfo;
-    private GatewayDiscordClient discordClient;
 
-    public DiscordEvolutionBot() {
+    public DiscordEvolutionBot(TelegramConnector telegramConnector) {
+        tgBot = telegramConnector;
         try {
             if (Files.exists(Path.of(CONFIG_GUILD_INFO_JSON))) {
                 guildInfo = GuildInfo.loadFrom(CONFIG_GUILD_INFO_JSON);
@@ -47,7 +50,7 @@ public class DiscordEvolutionBot {
     }
 
     public void start(String token) {
-        discordClient = DiscordClientBuilder.create(token).build()
+        GatewayDiscordClient discordClient = DiscordClientBuilder.create(token).build()
                 .gateway()
                 .setEnabledIntents(IntentSet.all())
                 .login()
@@ -55,14 +58,14 @@ public class DiscordEvolutionBot {
 
         commands.put("help", new HelpCommand(guildInfo, discordClient, commands));
         commands.put("ответь", new ReplyCommand(guildInfo, discordClient));
-        CallCommand callCommand = new CallCommand(guildInfo, discordClient, playersExtractor, telegramBot);
+        CallCommand callCommand = new CallCommand(guildInfo, discordClient, playersExtractor, tgBot);
         commands.put("призыв", callCommand);
         commands.put("слушать_гильдия", new GuildSubscribeCommand(guildInfo, discordClient));
         commands.put("отписаться_гильдия", new GuildUnsubscribeCommand(guildInfo, discordClient));
         commands.put("слушать_канал", new ChannelSubscribeCommand(guildInfo, discordClient));
         commands.put("отписаться_канал", new ChannelUnsubscribeCommand(guildInfo, discordClient));
         commands.put("join", new JoinVoiceChannelCommand(guildInfo, discordClient));
-        commands.put("send_all_update", new SendAllCommand(guildInfo, discordClient, telegramBot));
+        commands.put("send_all_update", new SendAllCommand(guildInfo, discordClient, tgBot));
         commands.put("set_call_chat", new SetCallChatCommand(guildInfo, discordClient));
         commands.put("remove_call_chat", new RemoveCallChatCommand(guildInfo, discordClient));
 

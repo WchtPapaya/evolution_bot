@@ -5,39 +5,41 @@ import com.wchtpapaya.bot.Messages;
 import com.wchtpapaya.bot.Utils;
 import com.wchtpapaya.bot.discord.config.GuildInfo;
 import com.wchtpapaya.bot.discord.config.NumberText;
+import com.wchtpapaya.bot.telegram.connector.TelegramConnector;
 import com.wchtpapaya.bot.discord.extractor.PlayersExtractor;
-import com.wchtpapaya.bot.telegram.TelegramEvolutionBot;
 import discord4j.common.util.Snowflake;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.VoiceState;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.channel.VoiceChannel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+
+
+
 import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.Set;
 
-@Slf4j
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class CallCommand extends AbstractCommand {
+ private static final Logger log = LoggerFactory.getLogger(CallCommand.class);
+
     public static final String CONFIG_NUMBERS_JSON = "config/discord_call_numbers.json";
     public static final String CONFIG_CALLS_JSON = "config/discord_calls.json";
     public static final int MAX_PLAYERS = 5;
     private final PlayersExtractor playersExtractor;
     private final NumberText numberTexts;
-    private final TelegramEvolutionBot minionBot;
+    private final TelegramConnector minionBot;
     private final String[] callTexts;
     private CallInfo callInfo = null;
-    @Getter
-    @Setter
     private boolean callStartedReply = true;
 
 
-    public CallCommand(GuildInfo guildInfo, GatewayDiscordClient discordClient, PlayersExtractor playersExtractor, TelegramEvolutionBot minionBot) {
+    public CallCommand(GuildInfo guildInfo, GatewayDiscordClient discordClient, PlayersExtractor playersExtractor, TelegramConnector minionBot) {
         super(guildInfo, discordClient);
         this.playersExtractor = playersExtractor;
         this.minionBot = minionBot;
@@ -71,7 +73,7 @@ public class CallCommand extends AbstractCommand {
             return;
         }
         String text = getCallTextWithPlayersNumber(null);
-        minionBot.editMessageAtListeners(callInfo.getTelegramMessagesInfo(), text);
+        minionBot.editMessageAtListeners(callInfo.telegramMessagesInfo(), text);
 
     }
 
@@ -81,7 +83,7 @@ public class CallCommand extends AbstractCommand {
     }
 
     public void resetCall() {
-        minionBot.editMessageAtListeners(callInfo.getTelegramMessagesInfo(), Messages.CALL_IS_ENDED);
+        minionBot.editMessageAtListeners(callInfo.telegramMessagesInfo(), Messages.CALL_IS_ENDED);
         callInfo = null;
     }
 
@@ -103,7 +105,7 @@ public class CallCommand extends AbstractCommand {
 
         String text = getCallTextWithPlayersNumber(event.getMember().get());
         log.info("Someone called members to play in the LoL at Discord. Sent message to Telegram listeners");
-        callInfo = new CallInfo(LocalTime.now(), minionBot.sendToListeners(text));
+        callInfo = new CallInfo(LocalTime.now(), minionBot.notifyListeners(text));
     }
 
     private String getCallTextWithPlayersNumber(Member caller) {
@@ -125,11 +127,18 @@ public class CallCommand extends AbstractCommand {
                 playersInfo.append("\n");
             }
         }
-        String text = getNextMessageText(callTexts) + playersInfo;
-        return text;
+        return getNextMessageText(callTexts) + playersInfo;
     }
 
     private String getRequiredPlayersCountText(int size) {
         return numberTexts.get(Math.max(MAX_PLAYERS - size, 0));
+    }
+
+    public boolean isCallStartedReply() {
+        return callStartedReply;
+    }
+
+    public void setCallStartedReply(boolean callStartedReply) {
+        this.callStartedReply = callStartedReply;
     }
 }

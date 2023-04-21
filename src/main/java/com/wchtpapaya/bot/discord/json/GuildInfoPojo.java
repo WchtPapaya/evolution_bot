@@ -1,13 +1,7 @@
 package com.wchtpapaya.bot.discord.json;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
-public class GuildInfoPojo {
-    private String GuildID;
-    private String[] subscribedChannelIDs;
-    private String[] callChannelIDs;
-    private String[] adminIDs;
-}
+public record GuildInfoPojo(String guildID,
+                            String[] subscribedChannelIDs,
+                            String[] callChannelIDs,
+                            String[] adminIDs)
+{}
