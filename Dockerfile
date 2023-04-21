@@ -1,7 +1,7 @@
 FROM alpine:3.17
-RUN apk update && apk add openjdk11-jre
+RUN apk update && apk add openjdk17-jre
 WORKDIR /evolution_bot
-COPY ./bin ./bin
+COPY ./scripts/bin ./bin
 COPY ./config ./config
 COPY ./update ./update
 COPY ./evolution_bot.jar .
