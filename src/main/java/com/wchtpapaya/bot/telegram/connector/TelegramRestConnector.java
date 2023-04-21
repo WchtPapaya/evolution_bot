@@ -1,8 +1,8 @@
-package com.wchtpapaya.bot.discord.connector;
+package com.wchtpapaya.bot.telegram.connector;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
-import lombok.extern.slf4j.Slf4j;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -17,8 +17,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class TelegramRestConnector implements TelegramConnector {
+ private static final Logger log = LoggerFactory.getLogger(TelegramRestConnector.class);
+
     @Override
     public Map<Long, Integer> notifyListeners(String text) {
         CloseableHttpClient httpClient = HttpClients.createDefault();

@@ -8,15 +8,17 @@ import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.channel.GuildChannel;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.object.entity.channel.VoiceChannel;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-@Slf4j
 public abstract class AbstractCommand implements Command {
+ private static final Logger log = LoggerFactory.getLogger(AbstractCommand.class);
+
 
     protected final GuildInfo guildInfo;
     protected GatewayDiscordClient discordClient;
@@ -41,7 +43,7 @@ public abstract class AbstractCommand implements Command {
         event.getMessage()
                 .getChannel().block()
                 .createMessage(text).block();
-        log.info("Sent the message {} ", text);
+        log.debug("Sent the message {} ", text);
     }
 
     protected String getNextMessageText(String[] texts) {

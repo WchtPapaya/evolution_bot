@@ -5,10 +5,14 @@ import com.wchtpapaya.bot.discord.config.GuildInfo;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.channel.GuildChannel;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class SetCallChatCommand extends AbstractCommand {
+ private static final Logger log = LoggerFactory.getLogger(SetCallChatCommand.class);
+
     public SetCallChatCommand(GuildInfo guildInfo, GatewayDiscordClient discordClient) {
         super(guildInfo, discordClient);
     }

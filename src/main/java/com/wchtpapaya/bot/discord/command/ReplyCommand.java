@@ -4,12 +4,16 @@ import com.wchtpapaya.bot.Utils;
 import com.wchtpapaya.bot.discord.config.GuildInfo;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.message.MessageCreateEvent;
-import lombok.extern.slf4j.Slf4j;
+
 
 import java.io.IOException;
 
-@Slf4j
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ReplyCommand extends AbstractCommand {
+ private static final Logger log = LoggerFactory.getLogger(ReplyCommand.class);
+
     public static final String CONFIG_REPLIES_JSON = "config/discord_replies.json";
     private final String[] replyTexts;
 
